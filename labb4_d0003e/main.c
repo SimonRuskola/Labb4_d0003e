@@ -1,18 +1,18 @@
-/*
- * labb4_d0003e.c
- *
- * Created: 2023-02-13 09:21:43
- * Author : simon
- */ 
+
+#include "Gui.h"
 
 #include <avr/io.h>
 
 
 int main(void)
 {
-    /* Replace with your application code */
+    button_init();
+    LCD_Init();
     while (1) 
     {
+        if(readJoystick()==3){
+            printAt(0,0);
+        }
     }
 }
 
