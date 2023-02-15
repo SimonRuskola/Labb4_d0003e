@@ -12,11 +12,15 @@ void pulseGenerator__init(pulseGenerator* self, int bit, portWriter writer) {
 
 
 void cycle(pulseGenerator* self){
-    if(self->active){
+
+    self->active = !(self->active);
+
+
+    if(self->active && self->freq != 0){
 
         SYNC(&self->writer ,write, self->bit);
 
-        SEND()
+        SEND( MSEC( (1000)/(self->freq) ) , MSEC( (1000)/(self->freq) + 10)  , self, cycle, NULL);
 
     }
 }
