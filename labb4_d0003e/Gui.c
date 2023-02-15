@@ -10,6 +10,17 @@
 
 
 
+void Gui__init(Gui* self) {
+    if (!self->initialized)
+    {
+        LCD_Init();
+        button_init();
+        self->initialized = 1;
+    }
+    
+
+ }
+
 
 void LCD_Init(void) {
 	CLKPR = (1 << CLKPCE); 
@@ -83,7 +94,6 @@ int getValueArray(int i){
     }
 }
 
-
 void writeChar(char ch, int pos) {
 	
 
@@ -136,7 +146,6 @@ void writeChar(char ch, int pos) {
 
 }
 
-
 void printAt(long num, int pos) {
     int pp = pos;
     writeChar( (num % 100) / 10 + '0', pp);
@@ -161,7 +170,4 @@ int readJoystick(void){
     }else{
         return 0;
     }
-
-
 }
-

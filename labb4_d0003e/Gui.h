@@ -1,7 +1,7 @@
 
 
 
-
+#include "TinyTimber.h"
 
 #define initGui {initObject(),0,0}
 
@@ -18,7 +18,7 @@
 #define NineValue   0x0b51 //0001010110110000 0x0 0xb 0x5 0x1 = 0x0b51 
 
 
-#include "TinyTimber.h"
+
 
 typedef struct {
     Object super;

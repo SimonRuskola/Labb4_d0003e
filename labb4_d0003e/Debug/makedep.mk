@@ -6,5 +6,9 @@ Gui.c
 
 main.c
 
+portWriter.c
+
+pulseGenerator.c
+
 TinyTimber.c
 
