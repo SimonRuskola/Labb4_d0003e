@@ -5,7 +5,6 @@
 
 typedef struct {
     Object super;
-	
 } portWriter;
 
 
