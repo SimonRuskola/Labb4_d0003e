@@ -5,7 +5,7 @@
 
 void write(portWriter* self, int arg){
     if((PORTE>>arg)&1){
-        PORTE &= (0<<arg);
+        PORTE &= ~(1<<arg);
     }else{
         PORTE |= (1<<arg);
     }

@@ -14,5 +14,7 @@ typedef struct {
 } pulseGenerator;
 
 
-void pulseGenerator__init(pulseGenerator* self, int bit, portWriter writer);
+void pulseGenerator__init(pulseGenerator* self, int bit, portWriter writer, int freq);
 void cycle(pulseGenerator* self);
+void incFreq(pulseGenerator* self);
+void decFreq(pulseGenerator* self);

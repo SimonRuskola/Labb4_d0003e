@@ -9,14 +9,27 @@
 #include <stdio.h>
 
 
+//, pulseGenerator pulse1, pulseGenerator pulse2
 
-void Gui__init(Gui* self) {
+void Gui__init(guiObj* self) {
+
+    //self->pulse1 = pulse1;
+    //self->currentPulse = pulse1;
+    //self->pulse2 = pulse2;
+
+    self->pos = 0;
+
     if (!self->initialized)
     {
         LCD_Init();
         button_init();
         self->initialized = 1;
     }
+
+    printAt(self->pulse1.freq,0);
+    printAt(self->pulse2.freq,4);
+
+    
     
 
  }
@@ -41,6 +54,7 @@ void LCD_Init(void) {
 void button_init(void){
 
 
+    
     // initialize button
     PORTB |= ((1 << 7)| (1 << 6 ) | (1 << 4));  // 7 down, 6 up, 4 center down 
 	PORTE |= ( (1 << 2) | ( 1 << 3));           // 2 left, 3 right
@@ -52,6 +66,8 @@ void button_init(void){
 
 	PCMSK1 |= (1 << PCINT15)|(1 << PCINT14)|(1 << PCINT12); //enables those pins
 	PCMSK0 |= (1 << PCINT3)|(1 << PCINT2);
+
+  
 
 
 }
@@ -89,7 +105,7 @@ int getValueArray(int i){
     case 9:
         return NineValue;
     
-    case 10:
+    default: // 10
         return BlankValue;
     }
 }
@@ -171,3 +187,44 @@ int readJoystick(void){
         return 0;
     }
 }
+
+
+
+
+
+void updateGui(guiObj* self){
+
+    
+    int value = readJoystick();
+    if(value==7){
+        if(!(self->currentPulse.freq<=0)){
+            ASYNC(&self->currentPulse ,decFreq ,NULL );
+            printAt(self->currentPulse.freq,self->pos);
+        }
+    }else if(value==2){ //left
+        self->currentPulse = self->pulse1;
+        self->pos = 0;
+        printAt(32,2);
+    }else if(value==3){ //right
+        self->currentPulse = self->pulse2;
+        self->pos = 4;
+        printAt(33,2);
+    }else if(value==6){ //upp
+        ASYNC(&self->currentPulse ,incFreq ,NULL);
+        printAt(self->currentPulse.freq,self->pos);
+    }else if(value==4){ //center
+        
+    }else{
+        printAt(34,2);
+
+    }
+        
+    
+   
+
+    
+
+
+}
+
+

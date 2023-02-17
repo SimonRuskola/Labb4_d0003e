@@ -3,35 +3,55 @@
 
 #include <avr/io.h>
 #include "TinyTimber.h"
-#include "pulseGenerator.h"
+//#include "pulseGenerator.h"
+
+
+typedef struct{
+	Object super;
+} mainObj;
+
+void run(mainObj self);
+
+mainObj mainObject = {initObject()};
+guiObj  gui = initGui;
+portWriter writer = initPortWriter;
+pulseGenerator pulse = initPulseGenerator;
+pulseGenerator pulse2 = initPulseGenerator;
+
+
 
 
 
 int main(void)
 {
-    button_init();
-    LCD_Init();
-    portWriter writer = {initObject()};
-    pulseGenerator pulse = {initObject(),initObject(),0,0};
-    pulseGenerator pulse2 = {initObject(),initObject(),0,0};
-    
-    pulseGenerator__init(&pulse, 4 , writer);
-    pulseGenerator__init(&pulse2, 6 , writer);
-
+    pulseGenerator__init(&pulse, 4 , writer, 2); 
+    pulseGenerator__init(&pulse2, 6 , writer, 1);
+    gui.pulse1 = pulse;
+    gui.pulse2= pulse2;
+    gui.currentPulse = pulse;
+    Gui__init(&gui);
+   
 
     //ASYNC(&pulse, cycle, NULL);
-    //SYNC(&pulse, cycle, NULL);
-    //SYNC(&pulse2, cycle, NULL);
-    TINYTIMBER(&pulse2, cycle, NULL);
-    
-
-    
-
+   
+    TINYTIMBER(&mainObject, run, NULL);
+    //TINYTIMBER(&pulse, cycle, NULL);
     
 	
     while (1) 
     {
 
     }
+}
+
+void run(mainObj self){
+    INSTALL(&gui, updateGui, IRQ_PCINT0);
+    INSTALL(&gui, updateGui, IRQ_PCINT1);
+
+
+    SYNC(&pulse, cycle, NULL);
+    SYNC(&pulse2, cycle, NULL);
+
+
 }
 

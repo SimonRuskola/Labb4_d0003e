@@ -426,7 +426,7 @@ int tinytimber(Object *obj, Method m, int arg) {
     ENABLE(1);
     if (m != NULL)
         //m(obj, arg);
-		ASYNC(obj,m,arg);
+		(obj,m,arg);
     DISABLE(status);
     idle();
     return 0;
