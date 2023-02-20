@@ -416,7 +416,7 @@ void install(Object *obj, Method m, enum Vector i) {
         mtable[i] = m;
         obj->wantedBy = INSTALLED_TAG;  // Mark object as subject to synchronization by interrupt disabling
         ENABLE(status);
-    }   
+    }
 }
 
 int tinytimber(Object *obj, Method m, int arg) {
@@ -426,7 +426,7 @@ int tinytimber(Object *obj, Method m, int arg) {
     ENABLE(1);
     if (m != NULL)
         //m(obj, arg);
-		(obj,m,arg);
+		ASYNC(obj,m,arg);
     DISABLE(status);
     idle();
     return 0;

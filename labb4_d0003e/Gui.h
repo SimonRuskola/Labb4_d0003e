@@ -4,7 +4,7 @@
 #include "TinyTimber.h"
 #include "pulseGenerator.h"
 
-#define initGui {initObject(),initObject(), initObject(),initObject(),0,0}
+#define initGui {initObject(),initObject(), initObject(),initObject(),0,0,0}
 
 #define BlankValue  0x0000
 #define ZeroValue   0x1551 //0001010101010001 0x1 0x5 0x5 0x1 = 0x1551
@@ -23,15 +23,18 @@
 
 typedef struct {
     Object super;
-	pulseGenerator pulse1;
-	pulseGenerator pulse2;
-	pulseGenerator currentPulse;
+	pulseGenerator* pulse1;
+	pulseGenerator* pulse2;
+	pulseGenerator* currentPulse;
 	int initialized;
 	int pos;
+	int prevValue;
 	
 } guiObj;
 
 
+
+void Gui__init(guiObj* self, pulseGenerator* pulse1, pulseGenerator* pulse2);	
 void LCD_Init();
 void button_init();
 void writeChar(char ch, int pos);

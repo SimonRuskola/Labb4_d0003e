@@ -3,21 +3,22 @@
 
 #include "Gui.h"
 #include <avr/io.h>
+#include "TinyTimber.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 
-//, pulseGenerator pulse1, pulseGenerator pulse2
 
-void Gui__init(guiObj* self) {
 
-    //self->pulse1 = pulse1;
-    //self->currentPulse = pulse1;
-    //self->pulse2 = pulse2;
+void Gui__init(guiObj* self, pulseGenerator* pulse1, pulseGenerator* pulse2) {
 
+    self->pulse1 = pulse1;
+    self->currentPulse = pulse1;
+    self->pulse2 = pulse2;
     self->pos = 0;
+    self->prevValue = 0;
 
     if (!self->initialized)
     {
@@ -26,8 +27,8 @@ void Gui__init(guiObj* self) {
         self->initialized = 1;
     }
 
-    printAt(self->pulse1.freq,0);
-    printAt(self->pulse2.freq,4);
+    printAt(self->pulse1->freq,0);
+    printAt(self->pulse2->freq,4);
 
     
     
@@ -165,9 +166,6 @@ void writeChar(char ch, int pos) {
 void printAt(long num, int pos) {
     int pp = pos;
     writeChar( (num % 100) / 10 + '0', pp);
-	for(volatile int i=0; i<1000; i++){
-		
-	}
     pp++;
     writeChar( num % 10 + '0', pp);
 }
@@ -189,18 +187,21 @@ int readJoystick(void){
 }
 
 
-
+void hold(guiObj* self){
+    AFTER(MSEC(500),self,updateGui,NULL);
+}
 
 
 void updateGui(guiObj* self){
 
     
-    int value = readJoystick();
+    
+volatile int value = readJoystick();
     if(value==7){
-        if(!(self->currentPulse.freq<=0)){
-            ASYNC(&self->currentPulse ,decFreq ,NULL );
-            printAt(self->currentPulse.freq,self->pos);
-        }
+        //SYNC(&self->currentPulse , &decFreq ,NULL);
+        self->currentPulse->freq--;                                   // Problably not allowed
+        printAt(getFreq(self->currentPulse),self->pos);
+        printAt(37,2);
     }else if(value==2){ //left
         self->currentPulse = self->pulse1;
         self->pos = 0;
@@ -210,21 +211,23 @@ void updateGui(guiObj* self){
         self->pos = 4;
         printAt(33,2);
     }else if(value==6){ //upp
-        ASYNC(&self->currentPulse ,incFreq ,NULL);
-        printAt(self->currentPulse.freq,self->pos);
+        SYNC(&self->currentPulse ,incFreq ,NULL);    
+        printAt(getFreq(self->currentPulse),self->pos);
+        //self->currentPulse->freq++;                                 // Problably not allowed
+
+        printAt(36,2);
     }else if(value==4){ //center
         
     }else{
         printAt(34,2);
 
     }
-        
-    
-   
-
-    
-
+    self->prevValue = value;
 
 }
+
+
+
+
 
 

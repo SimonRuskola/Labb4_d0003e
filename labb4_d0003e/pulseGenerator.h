@@ -18,3 +18,4 @@ void pulseGenerator__init(pulseGenerator* self, int bit, portWriter writer, int 
 void cycle(pulseGenerator* self);
 void incFreq(pulseGenerator* self);
 void decFreq(pulseGenerator* self);
+int getFreq(pulseGenerator* self);

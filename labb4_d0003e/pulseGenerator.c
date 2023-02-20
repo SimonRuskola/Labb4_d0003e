@@ -36,5 +36,8 @@ void incFreq(pulseGenerator* self){
 void decFreq(pulseGenerator* self){
     self->freq--;
 }
+int getFreq(pulseGenerator* self){
+    return self->freq;
+}
 
 
