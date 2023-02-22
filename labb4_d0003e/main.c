@@ -8,15 +8,14 @@
 
 typedef struct{
 	Object super;
+    portWriter* writer;
+    pulseGenerator* pulse1;
+    pulseGenerator* pulse2;
+    guiObj* gui;
 } mainObj;
 
-void run(mainObj self);
+void run(mainObj* self);
 
-mainObj mainObject = {initObject()};
-portWriter writer = initPortWriter;
-guiObj  gui = initGui;
-pulseGenerator pulse = initPulseGenerator;
-pulseGenerator pulse2 = initPulseGenerator;
 
 
 
@@ -24,17 +23,20 @@ pulseGenerator pulse2 = initPulseGenerator;
 
 int main(void)
 {
-    pulseGenerator__init(&pulse, 4 , writer, 2); 
-    pulseGenerator__init(&pulse2, 6 , writer, 1);
-    //gui.pulse1 = pulse;
-    //gui.pulse2 = pulse2;
-    //gui.currentPulse = pulse;
-    Gui__init(&gui, &pulse, &pulse2);
-   
+    Gui__init();
+    portWriter writer = initPortWriter;
+    pulseGenerator pulse = initPulseGenerator(&writer, 4, 1);
+    pulseGenerator pulse2 = initPulseGenerator(&writer, 6, 0);
+    guiObj  gui = initGui(&pulse, &pulse2, 0);
+    mainObj mainObject = {initObject(), &writer, &pulse, &pulse2, &gui};
 
-    //ASYNC(&pulse, cycle, NULL);
-   
-    TINYTIMBER(&mainObject, run, NULL);
+    for(int i; i<1000; i++){
+        printAt(i,2);
+    }
+
+
+    //SYNC(&pulse,cycle, 4);
+    return TINYTIMBER(&mainObject, run, NULL);
     //TINYTIMBER(&pulse, cycle, NULL);
     
 	
@@ -44,20 +46,17 @@ int main(void)
     }
 }
 
-void interupts(mainObj self){
-    ASYNC(&gui, updateGui, NULL);
+void interupts(mainObj* self){
+    ASYNC(&self->gui, updateGui, NULL);
 }
 
-void run(mainObj self){
+void run(mainObj* self){
     INSTALL(&self, interupts, IRQ_PCINT0);
     INSTALL(&self, interupts, IRQ_PCINT1);
 
 
-    SYNC(&pulse, cycle, NULL);
-    SYNC(&pulse2, cycle, NULL);
-
-
-    return 0;
+    ASYNC(&self->pulse1, cycle, NULL);
+    ASYNC(&self->pulse2, cycle, NULL);
 
 
 }

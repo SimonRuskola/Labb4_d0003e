@@ -1,14 +1,7 @@
 
 #include "pulseGenerator.h"
-#include "TinyTimber.h"
 
 
-void pulseGenerator__init(pulseGenerator* self, int bit, portWriter writer, int freq) {
-    self->bit = bit;
-    self->active = 0;
-    self->writer = writer;
-    self->freq = freq;
- }
 
 
 void cycle(pulseGenerator* self){
@@ -38,6 +31,9 @@ void decFreq(pulseGenerator* self){
 }
 int getFreq(pulseGenerator* self){
     return self->freq;
+}
+void setFreq(pulseGenerator* self, int freq){
+    self->freq = freq;
 }
 
 

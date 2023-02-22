@@ -3,7 +3,6 @@
 
 #include "Gui.h"
 #include <avr/io.h>
-#include "TinyTimber.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -12,26 +11,9 @@
 
 
 
-void Gui__init(guiObj* self, pulseGenerator* pulse1, pulseGenerator* pulse2) {
-
-    self->pulse1 = pulse1;
-    self->currentPulse = pulse1;
-    self->pulse2 = pulse2;
-    self->pos = 0;
-    self->prevValue = 0;
-
-    if (!self->initialized)
-    {
-        LCD_Init();
-        button_init();
-        self->initialized = 1;
-    }
-
-    printAt(self->pulse1->freq,0);
-    printAt(self->pulse2->freq,4);
-
-    
-    
+void Gui__init() {
+    LCD_Init();
+    button_init();
 
  }
 
@@ -191,38 +173,57 @@ void hold(guiObj* self){
     AFTER(MSEC(500),self,updateGui,NULL);
 }
 
+void unlock(guiObj* self){
+    self->lock = 0;
+}
+
 
 void updateGui(guiObj* self){
 
-    
-    
-volatile int value = readJoystick();
+    //if(!self->lock){
+    //self->lock = 1;
+    int value = readJoystick();
     if(value==7){
-        //SYNC(&self->currentPulse , &decFreq ,NULL);
-        self->currentPulse->freq--;                                   // Problably not allowed
-        printAt(getFreq(self->currentPulse),self->pos);
-        printAt(37,2);
-    }else if(value==2){ //left
-        self->currentPulse = self->pulse1;
-        self->pos = 0;
-        printAt(32,2);
-    }else if(value==3){ //right
-        self->currentPulse = self->pulse2;
-        self->pos = 4;
-        printAt(33,2);
-    }else if(value==6){ //upp
-        SYNC(&self->currentPulse ,incFreq ,NULL);    
-        printAt(getFreq(self->currentPulse),self->pos);
-        //self->currentPulse->freq++;                                 // Problably not allowed
+        if(self->pos==0){
+            self->freq1--;
+            ASYNC(&self->pulse1 , setFreq ,self->freq1);
+            printAt(self->freq1,self->pos);
+        }else if(self->pos==4){
+            self->freq2--;
+            ASYNC(&self->pulse2 , setFreq ,self->freq2);
+            printAt(self->freq2,self->pos);
+        }
 
-        printAt(36,2);
+
+        printAt(07,2);
+    }else if(value==2){ //left
+        self->pos = 0;
+        printAt(02,2);
+    }else if(value==3){ //right
+        self->pos = 4;
+        printAt(03,2);
+    }else if(value==6){ //upp
+        if(self->pos==0){
+            self->freq1++;
+            ASYNC(&self->pulse1 , setFreq ,self->freq1);
+            printAt(self->freq1,self->pos);
+        }else if(self->pos==4){
+            self->freq2++;
+            ASYNC(&self->pulse2 , setFreq ,self->freq2);
+            printAt(self->freq2,self->pos);
+        }
+
+        printAt(06,2);
     }else if(value==4){ //center
         
     }else{
-        printAt(34,2);
+        printAt(04,2);
 
     }
-    self->prevValue = value;
+    //}
+    //self->prevValue = value;
+    //AFTER(MSEC(100),&self,unlock,NULL);
+    
 
 }
 

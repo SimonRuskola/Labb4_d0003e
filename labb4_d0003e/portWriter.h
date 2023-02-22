@@ -8,4 +8,4 @@ typedef struct {
 } portWriter;
 
 
-void write(portWriter* self, int arg);
+int write(portWriter* self, int arg);
