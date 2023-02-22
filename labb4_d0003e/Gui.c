@@ -153,7 +153,6 @@ void printAt(long num, int pos) {
 }
 
 
-
 int readJoystick(void){
     if(PINB>>7==0){ // 7 down
         return 7;
@@ -170,7 +169,6 @@ int readJoystick(void){
     }
 }
 
-
 void hold(guiObj* self){
     AFTER(MSEC(500),self,updateGui,NULL);
 }
@@ -182,17 +180,17 @@ void unlock(guiObj* self){
 
 void updateGui(guiObj* self){
 
-    //if(!self->lock){
-    //self->lock = 1;
+    if(!(self->lock)){
+    self->lock = 1;
     int value = readJoystick();
     if(value==7){    //down
         if(self->pos==0){
             self->freq1--;
-            ASYNC(&self->pulse1 , setFreq ,self->freq1);
+            ASYNC(self->pulse1 , setFreq ,self->freq1);
             printAt(self->freq1,self->pos);
         }else if(self->pos==4){
             self->freq2--;
-            ASYNC(&self->pulse2 , setFreq ,self->freq2);
+            ASYNC(self->pulse2 , setFreq ,self->freq2);
             printAt(self->freq2,self->pos);
         }
         printAt(07,2);
@@ -201,11 +199,11 @@ void updateGui(guiObj* self){
     }else if(value==6){ //upp
         if(self->pos==0){
             self->freq1++;
-            ASYNC(&self->pulse1 , setFreq ,self->freq1);
+            ASYNC(self->pulse1 , setFreq ,self->freq1);
             printAt(self->freq1,self->pos);
         }else if(self->pos==4){
             self->freq2++;
-            ASYNC(&self->pulse2 , setFreq ,self->freq2);
+            ASYNC(self->pulse2 , setFreq ,self->freq2);
             printAt(self->freq2,self->pos);
         }
         printAt(06,2);
@@ -223,9 +221,9 @@ void updateGui(guiObj* self){
         printAt(04,2);
 
     }
-    //}
+    }
     //self->prevValue = value;
-    //AFTER(MSEC(100),&self,unlock,NULL);
+    AFTER(MSEC(400),self,unlock,NULL);
     
 
 }

@@ -23,15 +23,18 @@ typedef struct{
     mainObj mainObject = {initObject(), &writer, &pulse, &pulse2, &gui};
 
 
+void interupts(mainObj* self){
+	ASYNC(self->gui, updateGui, NULL);
+}
 
 
 void run(mainObj* self){
-    INSTALL(&self, interupts, IRQ_PCINT0);
-    INSTALL(&self, interupts, IRQ_PCINT1);
+    INSTALL(self, interupts, IRQ_PCINT0);
+    INSTALL(self, interupts, IRQ_PCINT1);
 
 
-    ASYNC(&self->pulse1, cycle, NULL);
-    ASYNC(&self->pulse2, cycle, NULL);
+    ASYNC(self->pulse1, cycle, NULL);
+    ASYNC(self->pulse2, cycle, NULL);
 
 
 }
@@ -56,7 +59,4 @@ int main(void)
     }
 }
 
-void interupts(mainObj* self){
-    ASYNC(&self->gui, updateGui, NULL);
-}
 
