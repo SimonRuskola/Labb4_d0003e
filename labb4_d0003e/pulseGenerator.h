@@ -4,13 +4,12 @@
 #include "TinyTimber.h"
 #include "portWriter.h"
 
-#define initPulseGenerator(writer, bit, freq) {initObject(), writer, bit ,0, freq}
+#define initPulseGenerator(writer, bit, freq) {initObject(), writer, bit, freq}
 
 typedef struct {
     Object super;
     portWriter* writer;
 	int bit;
-    int active;
     int freq;
 
 } pulseGenerator;

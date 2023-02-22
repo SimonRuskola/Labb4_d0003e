@@ -10,12 +10,14 @@ void cycle(pulseGenerator* self){
 
 
     if(self->freq != 0){
-        SYNC(&self->writer ,write, self->bit);
+        ASYNC(&self->writer ,write, self->bit);
+        AFTER(MSEC( ((1000)/(self->freq)) / 2 ) , self, cycle, NULL);
+    }else{
+        AFTER(MSEC((500)) , self, cycle, NULL);
     }
 
     
 
-    AFTER(MSEC( (1000)/(self->freq) /2 ) , self, cycle, NULL);
    // SEND( MSEC( (1000)/(self->freq) ) , MSEC(10)  , self, cycle, NULL);
     //SEND( MSEC( 1000 ) , 10  , self, cycle, NULL);
 
