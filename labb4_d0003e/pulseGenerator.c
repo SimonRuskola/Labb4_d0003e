@@ -37,5 +37,12 @@ int getFreq(pulseGenerator* self){
 void setFreq(pulseGenerator* self, int freq){
     self->freq = freq;
 }
+void saveFreq(pulseGenerator* self, int freq){
+    self->savedFreq = freq;
+}
+void setSaveFreq(pulseGenerator* self){
+    self->freq = self->savedFreq;
+}
+
 
 

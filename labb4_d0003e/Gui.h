@@ -18,7 +18,7 @@
 #define NineValue   0x0b51 //0001010110110000 0x0 0xb 0x5 0x1 = 0x0b51 
 
 
-#define initGui(pulse1, pulse2, pos) {initObject(),pulse1 ,pulse2 ,pos,0,0,0,0,0}
+#define initGui(pulse1, pulse2, pos) {initObject(),pulse1 ,pulse2 ,pos,0,0,0,0,0,0,0,0,0}
 
 
 typedef struct {
@@ -29,8 +29,12 @@ typedef struct {
 	int initialized;
 	int freq1;
 	int freq2;
-	int prevValue;
-	int lock;
+	int savedFreq1;
+	int savedFreq2;
+	int joystickValue;
+	int preValue;
+	int hold;
+	int debounce;
 	
 } guiObj;
 

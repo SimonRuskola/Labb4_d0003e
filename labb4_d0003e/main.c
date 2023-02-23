@@ -12,19 +12,24 @@ typedef struct{
     pulseGenerator* pulse1;
     pulseGenerator* pulse2;
     guiObj* gui;
+    int lock;
 } mainObj;
 
 
 
     portWriter writer = initPortWriter;
-    pulseGenerator pulse = initPulseGenerator(&writer, 4, 1);
+    pulseGenerator pulse = initPulseGenerator(&writer, 4, 0);
     pulseGenerator pulse2 = initPulseGenerator(&writer, 6, 0);
     guiObj  gui = initGui(&pulse, &pulse2, 0);
-    mainObj mainObject = {initObject(), &writer, &pulse, &pulse2, &gui};
+    mainObj mainObject = {initObject(), &writer, &pulse, &pulse2, &gui, 0};
 
+
+/*void unlock(mainObj* self){
+    self->lock = 0;
+}*/
 
 void interupts(mainObj* self){
-	ASYNC(self->gui, updateGui, NULL);
+    ASYNC(self->gui, updateGui, NULL);
 }
 
 
@@ -43,9 +48,7 @@ int main(void)
 {
     Gui__init();
 
-    for(int i; i<1000; i++){
-        printAt(i,2);
-    }
+
 
 
     //SYNC(&pulse,cycle, 4);
