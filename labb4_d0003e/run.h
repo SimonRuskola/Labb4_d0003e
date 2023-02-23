@@ -9,3 +9,9 @@ typedef struct{
     pulseGenerator* pulse2;
     guiObj* gui;
 } runObj;
+
+
+#define initRun(writer ,pulse1 ,pulse2, gui) {initObject(), writer ,pulse1 ,pulse2, gui}
+
+void run(runObj* self);
+void interupts(runObj* self);

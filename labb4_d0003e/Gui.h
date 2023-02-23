@@ -48,3 +48,5 @@ void printAt(long num, int pos);
 int getValueArray(int i);
 int readJoystick();
 void updateGui(guiObj* self);
+void updateGui2(guiObj* self);
+void inter(guiObj* self);

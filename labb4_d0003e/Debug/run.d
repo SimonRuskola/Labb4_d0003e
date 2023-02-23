@@ -1,4 +1,4 @@
-main.d main.o: .././main.c .././run.h .././Gui.h .././TinyTimber.h \
+run.d run.o: .././run.c .././run.h .././Gui.h .././TinyTimber.h \
  .././pulseGenerator.h .././portWriter.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \

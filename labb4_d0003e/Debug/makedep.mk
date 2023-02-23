@@ -10,5 +10,7 @@ portWriter.c
 
 pulseGenerator.c
 
+run.c
+
 TinyTimber.c
 

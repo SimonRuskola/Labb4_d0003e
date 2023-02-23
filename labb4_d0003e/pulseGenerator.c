@@ -16,12 +16,6 @@ void cycle(pulseGenerator* self){
         AFTER(MSEC((500)) , self, cycle, NULL);
     }
 
-    
-
-   // SEND( MSEC( (1000)/(self->freq) ) , MSEC(10)  , self, cycle, NULL);
-    //SEND( MSEC( 1000 ) , 10  , self, cycle, NULL);
-
-
 }
 
 void incFreq(pulseGenerator* self){
