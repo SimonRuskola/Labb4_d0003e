@@ -14,9 +14,11 @@
 void Gui__init() {
     LCD_Init();
     button_init();
+    LCDDR18 = 1;
+    printAt(0,0);
+    printAt(0,4);
 
  }
-
 
 void LCD_Init(void) {
 	CLKPR = (1 << CLKPCE); 
@@ -152,7 +154,6 @@ void printAt(long num, int pos) {
     writeChar( num % 10 + '0', pp);
 }
 
-
 int readJoystick(void){
     if(PINB>>7==0){ // 7 down
         return 7;
@@ -170,62 +171,103 @@ int readJoystick(void){
 }
 
 void hold(guiObj* self){
-    AFTER(MSEC(500),self,updateGui,NULL);
-}
-
-void unlock(guiObj* self){
-    self->lock = 0;
+    if(self->preValue == readJoystick()){
+        self->hold = 1;
+        ASYNC(self,updateGui, NULL);
+        AFTER(MSEC(100),self,hold,NULL);
+    }else{
+        self->hold = 0;
+    }
 }
 
 
 void updateGui(guiObj* self){
 
-    if(!(self->lock)){
-    self->lock = 1;
     int value = readJoystick();
-    if(value==7){    //down
-        if(self->pos==0){
+    self->preValue = value;
+    if(self->debounce >= 1){
+        value = 0;
+    }
+    switch (value)
+    {
+    case 7:  // down
+        if(self->pos==0 && self->freq1 > 0){
             self->freq1--;
             ASYNC(self->pulse1 , setFreq ,self->freq1);
             printAt(self->freq1,self->pos);
-        }else if(self->pos==4){
+        }else if(self->pos==4 && self->freq2 > 0){
             self->freq2--;
             ASYNC(self->pulse2 , setFreq ,self->freq2);
             printAt(self->freq2,self->pos);
         }
-        printAt(07,2);
-
-
-    }else if(value==6){ //upp
-        if(self->pos==0){
+        self->debounce += 2;
+        if(self->hold == 0){      
+            ASYNC(self, hold, NULL);   // starts hold cycle
+        }
+        
+        break;
+    case 6:   //up
+        if(self->pos==0 && self->freq1 < 99){
             self->freq1++;
             ASYNC(self->pulse1 , setFreq ,self->freq1);
             printAt(self->freq1,self->pos);
-        }else if(self->pos==4){
+        }else if(self->pos==4 && self->freq2 < 99){
             self->freq2++;
             ASYNC(self->pulse2 , setFreq ,self->freq2);
             printAt(self->freq2,self->pos);
         }
-        printAt(06,2);
-
-
-    }else if(value==2){ //left
+        self->debounce += 2;
+        if(self->hold == 0){
+            ASYNC(self, hold, NULL);   // starts hold cycle
+        }
+        break;
+    case 2:  // left
         self->pos = 0;
-        printAt(02,2);
-    }else if(value==3){ //right
+        LCDDR3 = 0;
+        LCDDR18 = 1;
+        self->debounce += 2;
+        break;
+    case 3:   // right
         self->pos = 4;
-        printAt(03,2);
-    }else if(value==4){ //center
+        LCDDR3 = 1;
+        LCDDR18 = 0;
+        self->debounce += 2;
+        break;
+    case 4:   // center
+        if(self->pos == 0){
+            if(self->freq1 != 0){
+                ASYNC(self->pulse1,saveFreq, self->freq1); 
+                self->savedFreq1 = self->freq1;
+                ASYNC(self->pulse1,setFreq, 0);
+                self->freq1 = 0;
+            }else{
+                ASYNC(self->pulse1, setSaveFreq, NULL);
+                self->freq1 = self->savedFreq1;
+                
+            }
+            printAt(self->freq1,self->pos);
+        }else if(self->pos == 4){
+            if(self->freq2 != 0){
+                ASYNC(self->pulse2,saveFreq, self->freq2); 
+                self->savedFreq2 = self->freq2;
+                ASYNC(self->pulse2,setFreq, 0);
+                self->freq2 = 0;
+            }else{
+                ASYNC(self->pulse2, setSaveFreq, NULL);
+                self->freq2 = self->savedFreq2;
+            }
+            printAt(self->freq2,self->pos);
+        }
+        printAt(4,2);
+        break;
+    default:
+       
+        self->debounce = 0;
         
-    }else{
-        printAt(04,2);
-
+        printAt(2,2);
+        break;
     }
-    }
-    //self->prevValue = value;
-    AFTER(MSEC(400),self,unlock,NULL);
     
-
 }
 
 
